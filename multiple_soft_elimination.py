@@ -1,32 +1,31 @@
-import StringUtils
+from string_utils import get_proper_prefixes_of_list
 from KMP import *
+from constants import infinity
 
 
 class MultipleSoftElimination:
     def __init__(self, sequence, patterns, cost, alphabet):
         self._sequence = sequence
         self._patterns = patterns
-        self._cost = cost
+        self._cost = cost #cost class that exposes get method
         self._alphabet = alphabet
 
     def eliminate(self):
         n = len (self._sequence)
-        valid_prefixes = set()
-        for p in self._patterns:
-            valid_prefixes = valid_prefixes.union([pref for pref in StringUtils.get_all_proper_prefixes(p) if (not(pref in patterns) and not (any(pref.endswith(p) for p in patterns)))])
-        A = {i:{prefix:float('inf') for prefix in valid_prefixes} for i in range(0,n+1)}
+        valid_prefixes = get_proper_prefixes_of_list(self._patterns)
+        A = {i:{prefix:infinity for prefix in valid_prefixes} for i in range(0,n+1)}
         traceback  = {i:{prefix:(None, None) for prefix in valid_prefixes} for i in range(0,n+1)}
         #initialization
         A[0][""] = 0.0
         #update
-        kmp_update_function = KmpUpdateFunction(self._patterns, self._alphabet, valid_prefixes)
+        kmp_update_function = KmpUpdateFunction(self._patterns, valid_prefixes, self._alphabet)
         for i in range(1,n+1):
             for p in valid_prefixes:
-                min_cost = float('inf')
+                min_cost = infinity
                 min_source = []
                 for source in kmp_update_function.get_source_set(p):
-                    val = A[i-1][source[0]] + self._cost(i, source[1])
-                    if val <= min_cost and val != float('inf'):
+                    val = A[i-1][source[0]] + self._cost.get(i, source[1])
+                    if val <= min_cost and val != infinity:
                         if val == min_cost:
                             min_source.append(source)
                         else: #new minimum
@@ -37,7 +36,7 @@ class MultipleSoftElimination:
         #construct the modified sequence
         i = n
         res_seq = list()
-        min_cost = float('inf')
+        min_cost = infinity
         min_prefix = None
         for p in valid_prefixes:
             prefix_cost = A[i][p]
@@ -51,17 +50,6 @@ class MultipleSoftElimination:
             i -= 1
         return ''.join(res_seq)
 
-
-seq = "aabaa"
-def cost(i, sigma):
-    if seq[i-1] == sigma:
-        return 0
-    return 10
-# cost = lambda i,sigma: 0 if seq[i] == sigma else 10
-alphabet = ["a", "c", "g", "t"]
-patterns = ["aab", "ab"]
-alg = MultipleSoftElimination(seq, patterns, cost, alphabet)
-print(alg.eliminate())
 
 
 

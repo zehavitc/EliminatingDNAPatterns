@@ -1,9 +1,10 @@
-import StringUtils
+from string_utils import *
+from constants import dna_alphabet
+from KMP_trie import KMPTrie
 
 
 class KmpUpdateFunction:
-    debug = True
-    def __init__(self, patterns, alphabet = ['a', 'c', 't', 'g'], validPrefixes = None, allowFullMatch = False):
+    def __init__(self, patterns, alphabet = dna_alphabet, use_kmp_trie = True, allowFullMatch = False, debug=False):
         """
 
         :param patterns:
@@ -12,14 +13,15 @@ class KmpUpdateFunction:
         self._alphabet = alphabet
         self._patterns = patterns
         self._allowFullMatch = allowFullMatch
-        if validPrefixes is None:
-            self._prefixes = set()
-            for p in patterns:
-                self._prefixes = self._prefixes.union(StringUtils.get_all_proper_prefixes(p))
-                self._prefixes = self._prefixes.union(patterns)
-        else:
-            self._prefixes = validPrefixes
+        self.debug = debug
+        self._prefixes = get_proper_prefixes_of_list(self._patterns)
+        self._use_kmp_trie = use_kmp_trie
+        if (self._use_kmp_trie):
+            self._kmp_trie = KMPTrie()
+            for p in self._prefixes:
+                self._kmp_trie.add_prefix(p)
         self._calc_update_function_table()
+
 
 
     # def calc_f_table(self, pattern, suffix_pattern):
@@ -45,6 +47,9 @@ class KmpUpdateFunction:
     #     return f
 
     def _kmp(self, sequence):
+        if self._use_kmp_trie:
+            return self._kmp_trie.get_longest_prefix_that_is_a_suffix(sequence)
+        #else - brute force
         res = ""
         res_len = 0
         for prefix in self._prefixes:
