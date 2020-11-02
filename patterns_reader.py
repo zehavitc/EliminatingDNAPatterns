@@ -12,6 +12,8 @@ class PatternsReader:
         #TODO - add input validation
         with open(file_path, 'r') as file:
             for line in file.readlines():
+                if line.isspace():
+                    continue
                 patterns = line.strip().split(',')  # using rstrip to remove the \n
                 res.extend(patterns)
         return res

@@ -3,14 +3,32 @@ import sys
 from patterns_reader import PatternsReader
 from sequence_reader import SequenceReader
 from dna_utils import extend_ambiguous_dna
+from multiple_soft_elimination import MultipleSoftElimination
+from cost import Cost
+from constants import dna_alphabet
 
-help_str = "-p <patterns_file> -s <sequence_file>"
+help_str = "-p <patterns_file> -s <sequence_file> [-r <result_file>]"
 
-def main(argv):
-    patterns_file_path,sequence_file_path = handle_input_params(argv)
+def eliminate(patterns, sequence):
+    extended_patterns = extend_embiguous_patterns(patterns)
+    cost = Cost(sequence)
+    result_seq = MultipleSoftElimination(sequence=sequence, patterns=extended_patterns, cost=cost, alphabet=dna_alphabet).eliminate()
+    result_cost = cost.get_cost_of_seq(result_seq)
+    return result_seq, result_cost
+
+def app(argv):
+    patterns_file_path,sequence_file_path, result_file_path = handle_input_params(argv)
     patterns = PatternsReader().read_from_file(patterns_file_path)
     sequence = SequenceReader().read_from_file(sequence_file_path)
-    extended_patterns = extend_embiguous_patterns(patterns_file_path)
+    result_seq, result_cost = eliminate(patterns=patterns, sequence=sequence)
+    if result_file_path is None:
+        print("result sequence: " + result_seq)
+        print("cost: " + str(result_cost))
+    else:
+        with open(result_file_path, "w") as result_file:
+            result_file.write(result_seq)
+    return result_seq, result_cost
+
 
 
 
@@ -25,8 +43,9 @@ def extend_embiguous_patterns(patterns_file_path):
 def handle_input_params(argv):
     patterns_file_path = None
     sequence_file_path = None
+    result_file_path = None
     try:
-        opts, args = getopt.getopt(argv, "hi:o:", ["patterns_file=", "sequence_file="])
+        opts, args = getopt.getopt(argv, "hp:s:r:", ["patterns_file=", "sequence_file=", "result_file="])
     except getopt.GetoptError:
         print(help_str)
         sys.exit(2)
@@ -38,11 +57,13 @@ def handle_input_params(argv):
             patterns_file_path = arg
         elif opt in ("-s", "--sequence_file"):
             sequence_file_path = arg
+        elif opt in ("-r", "--result_file"):
+            result_file_path = arg
     if patterns_file_path is None or sequence_file_path is None:
         print(help_str)
         sys.exit()
-    return patterns_file_path, sequence_file_path
+    return patterns_file_path, sequence_file_path, result_file_path
 
 
 if __name__ == "__main__":
-   main(sys.argv[1:])
+   app(sys.argv[1:])

@@ -1,6 +1,6 @@
 
 def get_proper_prefixes_of_str(str):
-    if (str == ""):
+    if str == "":
         return None # no proper prefix for the empty string
     res = set()
     res.add("") #the empty string is always a proper prefix

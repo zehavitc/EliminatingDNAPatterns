@@ -11,5 +11,8 @@ class SequenceReader:
         #TODO - add input validation
         with open(file_path, 'r') as file:
             raw_seq = file.readlines()
-            return raw_seq.strip()
+            for line in raw_seq:
+                if line.isspace():
+                    continue
+                return line.strip() #uses the first line that is not a space
         return None
