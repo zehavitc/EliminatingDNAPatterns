@@ -2,10 +2,13 @@ from constants import infinity
 from dna_utils import *
 
 class Cost:
-    def __init__(self, sequence, cost_unit = 1, transition_transversion_propotion = 2):
+    default_cost_unit = 1
+    default_transition_transversion_proportion = 2
+    def __init__(self, sequence, cost_unit = default_cost_unit, transition_transversion_proportion = default_transition_transversion_proportion):
         self._sequence = sequence
-        self._cost_unit = cost_unit
-        self._transition_transversion_propotion = transition_transversion_propotion
+        self._cost_unit = cost_unit if (cost_unit is not None) else self.default_cost_unit
+        self._transition_transversion_propotion = transition_transversion_proportion if (transition_transversion_proportion is not None) \
+            else self.default_transition_transversion_proportion
 
     def get(self, index, letter):
         """

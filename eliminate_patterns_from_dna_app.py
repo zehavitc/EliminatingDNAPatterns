@@ -9,18 +9,18 @@ from constants import dna_alphabet
 
 help_str = "-p <patterns_file> -s <sequence_file> [-r <result_file>]"
 
-def eliminate(patterns, sequence):
+def eliminate(patterns, sequence, cost_unit, transition_transversion_proportion):
     extended_patterns = extend_embiguous_patterns(patterns)
-    cost = Cost(sequence)
+    cost = Cost(sequence, cost_unit, transition_transversion_proportion)
     result_seq = MultipleSoftElimination(sequence=sequence, patterns=extended_patterns, cost=cost, alphabet=dna_alphabet).eliminate()
     result_cost = cost.get_cost_of_seq(result_seq)
     return result_seq, result_cost
 
 def app(argv):
-    patterns_file_path,sequence_file_path, result_file_path = handle_input_params(argv)
+    patterns_file_path,sequence_file_path, result_file_path, cost_unit, transition_transversion_proportion = handle_input_params(argv)
     patterns = PatternsReader().read_from_file(patterns_file_path)
     sequence = SequenceReader().read_from_file(sequence_file_path)
-    result_seq, result_cost = eliminate(patterns=patterns, sequence=sequence)
+    result_seq, result_cost = eliminate(patterns=patterns, sequence=sequence, cost_unit=cost_unit, transition_transversion_proportion=transition_transversion_proportion)
     if result_file_path is None:
         print("result sequence: " + result_seq)
         print("cost: " + str(result_cost))
@@ -44,8 +44,10 @@ def handle_input_params(argv):
     patterns_file_path = None
     sequence_file_path = None
     result_file_path = None
+    cost_unit = None
+    transition_transversion_proportion = None
     try:
-        opts, args = getopt.getopt(argv, "hp:s:r:", ["patterns_file=", "sequence_file=", "result_file="])
+        opts, args = getopt.getopt(argv, "hp:s:r:c:t", ["patterns_file=", "sequence_file=", "result_file=", "cost_unit=", "transition_transversion_proportion="])
     except getopt.GetoptError:
         print(help_str)
         sys.exit(2)
@@ -59,10 +61,14 @@ def handle_input_params(argv):
             sequence_file_path = arg
         elif opt in ("-r", "--result_file"):
             result_file_path = arg
+        elif opt in ("-c", "--cost_unit"):
+            cost_unit = arg
+        elif opt in ("-t", "--transition_transversion_proportion"):
+            transition_transversion_proportion = arg
     if patterns_file_path is None or sequence_file_path is None:
         print(help_str)
         sys.exit()
-    return patterns_file_path, sequence_file_path, result_file_path
+    return patterns_file_path, sequence_file_path, result_file_path, cost_unit, transition_transversion_proportion
 
 
 if __name__ == "__main__":
