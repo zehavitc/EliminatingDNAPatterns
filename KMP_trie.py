@@ -20,15 +20,15 @@ class KMPTrie:
     def get_longest_prefix_that_is_a_suffix(self, str):
         res_suffix_len = 0
         index_of_letter_to_compare = len(str) - 1
-        compare_failed = False
+        comparison_failed = False
         current_node = self.root
-        while index_of_letter_to_compare >= 0 and not compare_failed:
-            compare_failed = True
+        while index_of_letter_to_compare >= 0 and not comparison_failed:
+            comparison_failed = True
             for child in current_node.children:
                 if child.letter == str[index_of_letter_to_compare]:
                     if child.is_prefix:
                         res_suffix_len = len(str) - index_of_letter_to_compare
-                    compare_failed = False
+                    comparison_failed = False
                     current_node = child
                     break
             index_of_letter_to_compare = index_of_letter_to_compare - 1

@@ -1,3 +1,4 @@
+from Tests import test_utils
 from dna_utils import *
 
 class TestDnaUtils:

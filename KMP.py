@@ -46,6 +46,7 @@ class KmpUpdateFunction:
     #             i = i + 1
     #     return f
 
+    ## Note: this is not the version published in the paper, but a previous version that is a bit less efficient
     def _kmp(self, sequence):
         if self._use_kmp_trie:
             return self._kmp_trie.get_longest_prefix_that_is_a_suffix(sequence)

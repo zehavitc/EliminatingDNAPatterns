@@ -3,7 +3,7 @@ from dna_utils import *
 
 class Cost:
     default_cost_unit = 1
-    default_transition_transversion_proportion = 2
+    default_transition_transversion_proportion = 1
     def __init__(self, sequence, cost_unit = default_cost_unit, transition_transversion_proportion = default_transition_transversion_proportion):
         self._sequence = sequence
         self._cost_unit = cost_unit if (cost_unit is not None) else self.default_cost_unit

@@ -1,7 +1,8 @@
+from Tests import test_utils
 from cost import Cost
 from constants import infinity
-class TestCost:
 
+class TestCost:
     def test_cost(self):
         seq = "aaAr"
         cost = Cost(sequence=seq, cost_unit=1, transition_transversion_proportion=2)
