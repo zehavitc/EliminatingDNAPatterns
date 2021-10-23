@@ -23,7 +23,7 @@ not specified, the result will be printed to the console.
  is defined as cost unit × transition transversion ratio. The default ratio is 1.
  
  Example: 
- python .\eliminate_patterns_from_dna_app.py -p c:\patterns.txt -s sequence.txt -r results.txt -c 2 -t 1.5
+ python .\eliminate_patterns_from_dna_app.py -p c:\patterns.txt -s c:\sequence.txt -r c:\results.txt -c 2 -t 1.5
 
 ### Dependencies
 
